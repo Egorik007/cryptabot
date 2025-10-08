@@ -1,7 +1,6 @@
 const ccxt = require('ccxt');
 const { SMA, RSI, ADX } = require('technicalindicators');
 
-<<<<<<< HEAD
 const exchange = new ccxt.bybit({
     apiKey: 'hb0fDEkGCJfHk8WzcQ',  // Вставь Bybit ключи
     secret: 'dZmk1iXSNxyrz72GiGHy0Emr25z721CkuvpW',
@@ -13,7 +12,6 @@ exchange.timeout = 30000;  // Таймаут 30 сек
 exchange.options['swap'] = {'category': 'linear'};  // Фикс для USDT perpetual
 
 const symbol = 'SOLUSDT';
-=======
 const exchange = new ccxt.binance({
     apiKey: 'pBnzadkI7YsvXKFkGtpKlM0iqKCZKIfnxiscqr3WAY3w4IBRDZguWksAMrZOzfO8',  // Вставь свои (Spot права!)
     secret: 'GTIQkF5RkcZJHMkxt0hoYE03jeHFuB65BnUmSuVtfdpZla2NVbokUMbur3pc0DKJ',
@@ -22,7 +20,6 @@ const exchange = new ccxt.binance({
 });
 
 const symbol = 'ETHUSDT';
->>>>>>> 23b7eb435c3a1695785a1a6bf362cd49f7ba906a
 const timeframe = '1m';
 const shortPeriod = 5;
 const longPeriod = 50;
@@ -32,15 +29,12 @@ const rsiSell = 70;
 const adxPeriod = 14;
 const adxThreshold = 20;
 const volumeMult = 1.2;
-<<<<<<< HEAD
 const amount = 0.05;
 const stopLossPct = 0.01;
 const takeProfitPct = 0.03;
-=======
 const amount = 0.006;  // 0.006 ETH (~28$ экв., маржа ~1.12$ с 25x)
 const stopLossPct = 0.02;
 const takeProfitPct = 0.05;
->>>>>>> 23b7eb435c3a1695785a1a6bf362cd49f7ba906a
 const leverage = 25;
 
 let position = null;
@@ -51,20 +45,16 @@ async function initLeverage() {
         await exchange.setLeverage(leverage, symbol);
         console.log(`Левередж: ${leverage}x установлен!`);
     } catch (error) {
-<<<<<<< HEAD
         if (error.message.includes('110043') || error.message.includes('leverage not modified')) {
             console.log(`Левередж: ${leverage}x уже установлен!`);
         } else {
             console.error('Ошибка левереджа:', error.message);
         }
-=======
         console.error('Ошибка левереджа:', error.message);
->>>>>>> 23b7eb435c3a1695785a1a6bf362cd49f7ba906a
     }
 }
 
 async function getData() {
-<<<<<<< HEAD
     let attempts = 0;
     while (attempts < 3) {
         try {
@@ -89,7 +79,6 @@ async function getData() {
 
 function calculateIndicators(data) {
     if (data.length < 50) return { currentPrice: 0, rsi: 50, adx: 0, volOk: false };
-=======
     const ohlcv = await exchange.fetchOHLCV(symbol, timeframe, undefined, 100);
     return ohlcv.map(candle => ({
         timestamp: new Date(candle[0]),
@@ -102,7 +91,6 @@ function calculateIndicators(data) {
 }
 
 function calculateIndicators(data) {
->>>>>>> 23b7eb435c3a1695785a1a6bf362cd49f7ba906a
     const closes = data.map(d => d.close);
     const highs = data.map(d => d.high);
     const lows = data.map(d => d.low);
@@ -204,11 +192,8 @@ process.on('unhandledRejection', (error) => {
     setTimeout(() => mainLoop(), 10000);
 });
 
-<<<<<<< HEAD
 // Инит + цикл 1 минута
-=======
 // Инит + цикл
->>>>>>> 23b7eb435c3a1695785a1a6bf362cd49f7ba906a
 initLeverage();
 mainLoop();
 setInterval(mainLoop, 60000);
