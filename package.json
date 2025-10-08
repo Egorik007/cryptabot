@@ -1,0 +1,25 @@
+{
+  "name": "crypto-bot",
+  "version": "1.0.0",
+<<<<<<< HEAD
+  "description": "",
+=======
+>>>>>>> 23b7eb435c3a1695785a1a6bf362cd49f7ba906a
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bot.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ccxt": "^4.5.7",
+    "technicalindicators": "^3.1.0"
+<<<<<<< HEAD
+  }
+=======
+  },
+  "description": ""
+>>>>>>> 23b7eb435c3a1695785a1a6bf362cd49f7ba906a
+}
