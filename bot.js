@@ -2,24 +2,16 @@ const ccxt = require('ccxt');
 const { SMA, RSI, ADX } = require('technicalindicators');
 
 const exchange = new ccxt.bybit({
-    apiKey: 'hb0fDEkGCJfHk8WzcQ',  // Вставь Bybit ключи
-    secret: 'dZmk1iXSNxyrz72GiGHy0Emr25z721CkuvpW',
-    sandbox: false,  // Реал!
-    options: { defaultType: 'swap' }  // Perpetual
+    apiKey: 'hb0fDEkGCJfHk8WzcQ',  // Твой Bybit apiKey
+    secret: 'dZmk1iXSNxyrz72GiGHy0Emr25z721CkuvpW',  // Твой Bybit secret
+    sandbox: false,
+    options: { defaultType: 'swap' }
 });
 
-exchange.timeout = 30000;  // Таймаут 30 сек
-exchange.options['swap'] = {'category': 'linear'};  // Фикс для USDT perpetual
+exchange.timeout = 30000;
+exchange.options['swap'] = {'category': 'linear'};
 
 const symbol = 'SOLUSDT';
-const exchange = new ccxt.binance({
-    apiKey: 'pBnzadkI7YsvXKFkGtpKlM0iqKCZKIfnxiscqr3WAY3w4IBRDZguWksAMrZOzfO8',  // Вставь свои (Spot права!)
-    secret: 'GTIQkF5RkcZJHMkxt0hoYE03jeHFuB65BnUmSuVtfdpZla2NVbokUMbur3pc0DKJ',
-    sandbox: false,  // Реал, но малый amount!
-    options: { defaultType: 'future' }  // Спот!
-});
-
-const symbol = 'ETHUSDT';
 const timeframe = '1m';
 const shortPeriod = 5;
 const longPeriod = 50;
@@ -32,9 +24,6 @@ const volumeMult = 1.2;
 const amount = 0.05;
 const stopLossPct = 0.01;
 const takeProfitPct = 0.03;
-const amount = 0.006;  // 0.006 ETH (~28$ экв., маржа ~1.12$ с 25x)
-const stopLossPct = 0.02;
-const takeProfitPct = 0.05;
 const leverage = 25;
 
 let position = null;
@@ -50,7 +39,6 @@ async function initLeverage() {
         } else {
             console.error('Ошибка левереджа:', error.message);
         }
-        console.error('Ошибка левереджа:', error.message);
     }
 }
 
@@ -79,18 +67,6 @@ async function getData() {
 
 function calculateIndicators(data) {
     if (data.length < 50) return { currentPrice: 0, rsi: 50, adx: 0, volOk: false };
-    const ohlcv = await exchange.fetchOHLCV(symbol, timeframe, undefined, 100);
-    return ohlcv.map(candle => ({
-        timestamp: new Date(candle[0]),
-        open: candle[1],
-        high: candle[2],
-        low: candle[3],
-        close: candle[4],
-        volume: candle[5]
-    }));
-}
-
-function calculateIndicators(data) {
     const closes = data.map(d => d.close);
     const highs = data.map(d => d.high);
     const lows = data.map(d => d.low);
@@ -147,7 +123,7 @@ async function mainLoop() {
             await exchange.createMarketBuyOrder(symbol, amount);
             entryPrice = currentPrice;
             position = 'long';
-            console.log(`LONG ${amount} ETH по ${entryPrice}! Экв. ~${(amount * entryPrice * leverage).toFixed(0)}$ | Стоп: ${entryPrice * (1 - stopLossPct)}, Тейк: ${entryPrice * (1 + takeProfitPct)}`);
+            console.log(`LONG ${amount} SOL по ${entryPrice}! Экв. ~${(amount * entryPrice * leverage).toFixed(0)}$ | Стоп: ${entryPrice * (1 - stopLossPct)}, Тейк: ${entryPrice * (1 + takeProfitPct)}`);
         } else if (signal === 'SELL' && position !== 'short') {
             if (position === 'long') {
                 await exchange.createMarketSellOrder(symbol, amount);
@@ -156,7 +132,7 @@ async function mainLoop() {
             await exchange.createMarketSellOrder(symbol, amount);
             entryPrice = currentPrice;
             position = 'short';
-            console.log(`SHORT ${amount} ETH по ${entryPrice}! Экв. ~${(amount * entryPrice * leverage).toFixed(0)}$ | Стоп: ${entryPrice * (1 + stopLossPct)}, Тейк: ${entryPrice * (1 - takeProfitPct)}`);
+            console.log(`SHORT ${amount} SOL по ${entryPrice}! Экв. ~${(amount * entryPrice * leverage).toFixed(0)}$ | Стоп: ${entryPrice * (1 + stopLossPct)}, Тейк: ${entryPrice * (1 - takeProfitPct)}`);
         } else if (position === 'long') {
             if (currentPrice <= entryPrice * (1 - stopLossPct)) {
                 await exchange.createMarketSellOrder(symbol, amount);
@@ -193,7 +169,6 @@ process.on('unhandledRejection', (error) => {
 });
 
 // Инит + цикл 1 минута
-// Инит + цикл
 initLeverage();
 mainLoop();
 setInterval(mainLoop, 60000);
